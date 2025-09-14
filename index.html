@@ -6,7 +6,7 @@
     <title>Digital Art Gallery</title>
     
     <!-- Мета-теги для соцсетей -->
-    <meta property="og:title" content="Digital Art Gallery - Осенние сюжеты">
+    <meta property="og:title" content="Digital Art Gallery - Осенние истории">
     <meta property="og:description" content="Галерея цифровых портретов в осенней тематике">
     <meta property="og:image" content="https://korsunfoto.github.io/autumn-2025/images/образец_№1_мал_ёжик.jpg">
     <meta property="og:url" content="https://korsunfoto.github.io/autumn-2025/">
@@ -16,7 +16,7 @@
     <!-- Подключаем шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     
     <!-- Подключаем PhotoSwipe -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.min.css">
@@ -65,9 +65,9 @@
     }
 
     .header .subtitle {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Yomogi', cursive;
         font-size: 1.37rem;
-        font-weight: 600; /* Изменено на полужирный */
+        font-weight: 400;
         color: var(--accent-orange);
         margin-top: 0.5rem;
         letter-spacing: 2px;
@@ -262,7 +262,7 @@
         align-items: center;
         padding: 20px;
         text-align: justify;
-        background-color: var(--dark-bg); /* Подложка на весь экран */
+        background-color: var(--dark-bg);
         color: white;
         z-index: 1600;
         overflow-y: auto;
@@ -323,7 +323,7 @@
 
     .pswp--info-slide .pswp__bg {
         opacity: 0.98 !important;
-        background-color: #1a1a1a !important;
+        background-color: var(--dark-bg) !important;
     }
 
     @media (max-width: 1200px) {
@@ -375,7 +375,7 @@
         }
         
         .info-fullscreen {
-            padding: 30px;
+            padding: 15px;
         }
         
         .info-fullscreen-content {
@@ -387,7 +387,8 @@
         }
         
         .info-fullscreen p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
     }
 
@@ -403,7 +404,6 @@
         
         .header .subtitle {
             font-size: 1rem;
-            font-weight: 600; /* Полужирный на мобильных */
         }
         
         .title-divider {
@@ -438,28 +438,25 @@
             font-size: 0.75rem;
         }
         
-        /* Улучшенные стили для информационного блока на мобильных */
         .info-fullscreen {
-            padding: 15px;
-            justify-content: flex-start; /* Чтобы контент начинался сверху */
-            padding-top: 60px; /* Добавляем отступ сверху */
+            padding: 10px;
+            justify-content: flex-start;
+            padding-top: 60px;
         }
         
         .info-fullscreen-content {
             padding: 15px;
-            max-width: 100%; /* На всю ширину */
         }
         
         .info-fullscreen h2 {
-            font-size: 1.6rem; /* Увеличиваем размер заголовка */
-            margin-bottom: 1.2rem;
-            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         .info-fullscreen p {
-            font-size: 0.95rem; /* Увеличиваем размер текста */
+            font-size: 0.9rem;
             line-height: 1.5;
-            text-align: left; /* Выравнивание по левому краю для лучшей читаемости */
+            text-align: left;
         }
     }
 
@@ -513,7 +510,7 @@
     <header class="header">
         <h1 class="main-title">Digital Art</h1>
         <div class="title-divider"></div>
-        <p class="subtitle">Осенние сюжеты</p> <!-- Изменено с "Осенние истории" -->
+        <p class="subtitle">Осенние истории</p>
     </header>
 
     <main>
@@ -527,12 +524,12 @@
     <!-- Контейнер для информационного слайда -->
     <div class="info-fullscreen" id="info-fullscreen">
         <div class="info-fullscreen-content">
-            <h2>Ваш цифровой портрет.. немного о процессе:</h2>
-            <p>Рад творческому сотрудничеству с вами! Я создаю для вас портрет в технике цифровой живописи. Это не фотография, а уникальное арт-произведение, где главная задача — передать настроение и создать гармоничный образ.</p>
-            <p>Что делает ваш портрет особенным: черты лица, свет и фактуры могут быть специально стилизованы для большей художественной выразительности. Именно это придает портрету характер и ценность. Гармония впечатления. Я фокусируюсь на общей целостности и эстетике картины. Иногда для достижения идеального визуального баланса некоторые детали прорабатываются не с фотографической точностью, а как элемент искусства.</p>
-            <p>Внимание, важная информация о цветопередаче: современные дисплеи смартфонов и мониторы часто имеют повышенную яркость и насыщенность. Это создает потрясающую картинку на экране, но физические свойства фотобумаги иной. Печать в профессиональной лаборатории Fuji обеспечивает наиболее точные и естественные цвета. Поэтому финальные отпечатки могут выглядеть немного более мягкими и менее «ядерными», чем на вашем экране. Это не недостаток, а особенность технологии перевода цифрового изображения в материальный формат.</p>
-            <p>Я гарантирую, что печать будет выполнена на качественном оборудовании с точной цветокоррекцией.</p>
-            <p>Благодарю за доверие и понимание! Я делаю всё, чтобы результат вас искренне радовал. С уважением, Александр Корсун</p>
+            <h2>Цифровой портрет: искусство, а не фото</h2>
+            <p>Ваш портрет создается в технике цифровой живописи. Это уникальное произведение, где мы сознательно стилизуем черты лица и детали для художественной выразительности. Фокус на общей гармонии и настроении может означать отклонение от фотографической точности — это и есть ценность искусства.</p>
+            <p>Чтобы избежать недопонимания:</p>
+            <p>Фотографии на экране вашего телефона выглядят очень ярко из-за настроек дисплея. При печати в лаборатории цвета становятся более натуральными и естественными.</p>
+            <p>Помните: то, что вы видите на отпечатках — это и есть реальное, качественное фото. Ожидайте именно такой, спокойной и приятной глазу цветопередачи.</p>
+            <p>Спасибо, что были внимательны!</p>
         </div>
     </div>
 
