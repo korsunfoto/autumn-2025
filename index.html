@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Art Gallery</title>
+    
+    <!-- Подключаем шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Подключаем PhotoSwipe -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.min.css">
+    
+    <style>
+    :root {
+        --primary-color: #ffffff;
+        --accent-color: #aaaaaa;
+        --text-color: #e0e0e0;
+        --dark-bg: #181818;
+        --card-bg: #181818;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        --overlay: rgba(0, 0, 0, 0.7);
+        --accent-orange: #FF9E44;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: var(--dark-bg);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin: 2rem 0 3rem;
+        padding: 0 20px;
+    }
+
+    .header .main-title {
+        font-family: 'Berkshire Swash', cursive;
+        font-size: 5.5rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        letter-spacing: 2px;
+        line-height: 1;
+    }
+
+    .header .subtitle {
+        font-family: 'Yomogi', cursive;
+        font-size: 1.37rem;
+        font-weight: 400;
+        color: var(--accent-orange);
+        margin-top: 0.5rem;
+        letter-spacing: 2px;
+    }
+
+    .title-divider {
+        width: 70%;
+        height: 2px;
+        background-color: var(--accent-orange);
+        margin: 0.8rem auto;
+        max-width: 380px;
+        border-radius: 1px;
+    }
+
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        aspect-ratio: 3/4;
+        background-color: #000;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s ease;
+        filter: brightness(100%);
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .item-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px;
+        color: white;
+        z-index: 2;
+        pointer-events: none;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+    }
+
+    .item-caption h3 {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .item-caption p {
+        font-size: 0.8rem;
+        opacity: 0.9;
+        font-weight: 300;
+        line-height: 1.2;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    /* Стили для PhotoSwipe - скрываем стрелки на мобильных */
+    .pswp__button--download {
+        display: none !important;
+    }
+
+    /* Скрываем стандартный заголовок PhotoSwipe */
+    .pswp__caption {
+        display: none !important;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 5rem;
+        padding: 3rem;
+        opacity: 0.5;
+        font-size: 0.9rem;
+        font-weight: 300;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Анимация появления элементов */
+    @keyframes fadeIn {
+        from { 
+            opacity: 0; 
+            transform: translateY(30px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
+
+    .gallery-item {
+        animation: fadeIn 0.7s ease forwards;
+        opacity: 0;
+    }
+
+    .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+    .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+    .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+    .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+    .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+    .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+
+    /* Стили для информационного блока как элемента галереи */
+    .info-gallery-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        aspect-ratio: 3/4;
+        background-color: var(--dark-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .info-gallery-item:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .info-gallery-item h3 {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--accent-orange);
+    }
+
+    .info-gallery-item p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    /* Стили для полноэкранного просмотра информационного блока */
+    .pswp--info-slide .pswp__img {
+        display: none;
+    }
+
+    .info-fullscreen {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        text-align: center;
+        background-color: #1a1a1a;
+        color: white;
+        z-index: 1060;
+    }
+
+    .info-fullscreen h2 {
+        font-family: 'Inter', sans-serif;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--accent-orange);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .info-fullscreen p {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        max-width: 800px;
+        color: #ffffff;
+        opacity: 0.95;
+        font-weight: 400;
+    }
+
+    .pswp--info-slide .info-fullscreen {
+        display: flex;
+    }
+
+    @media (max-width: 1200px) {
+        .gallery {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 900px) {
+        .gallery {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        
+        .header .main-title {
+            font-size: 4.5rem;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .title-divider {
+            max-width: 300px;
+        }
+        
+        .item-caption {
+            padding: 12px;
+        }
+        
+        .item-caption h3 {
+            font-size: 1rem;
+        }
+        
+        .item-caption p {
+            font-size: 0.7rem;
+        }
+        
+        .info-gallery-item {
+            padding: 15px;
+        }
+        
+        .info-gallery-item h3 {
+            font-size: 1.3rem;
+        }
+        
+        .info-gallery-item p {
+            font-size: 0.8rem;
+        }
+        
+        .info-fullscreen {
+            padding: 30px;
+        }
+        
+        .info-fullscreen h2 {
+            font-size: 1.7rem;
+        }
+        
+        .info-fullscreen p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .gallery {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .header .main-title {
+            font-size: 3rem;
+        }
+        
+        .header .subtitle {
+            font-size: 1rem;
+        }
+        
+        .title-divider {
+            max-width: 200px;
+            height: 2px;
+        }
+        
+        .item-caption {
+            padding: 8px;
+        }
+        
+        .item-caption h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .item-caption p {
+            font-size: 0.65rem;
+            line-height: 1.1;
+        }
+        
+        .info-gallery-item {
+            padding: 12px;
+        }
+        
+        .info-gallery-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.7rem;
+        }
+        
+        .info-gallery-item p {
+            font-size: 0.75rem;
+        }
+        
+        .info-fullscreen {
+            padding: 20px;
+        }
+        
+        .info-fullscreen h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-fullscreen p {
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+    }
+
+    /* Индикатор загрузки */
+    .loader {
+        display: none;
+        width: 48px;
+        height: 48px;
+        margin: 40px auto;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-left-color: var(--primary-color);
+        border-radius: 50%;
+        animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Стили для кликабельных ссылок */
+    .gallery-item a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    /* Эффект тонкой рамки при наведении */
+    .gallery-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    .gallery-item:hover::before {
+        opacity: 1;
+    }
+
+    /* Скрываем стрелки навигации на мобильных устройствах */
+    @media (max-width: 768px) {
+        .pswp__button--arrow--left,
+        .pswp__button--arrow--right {
+            display: none !important;
+        }
+    }
+
+    /* Исправляем проблему с затемнением информационного блока */
+    .pswp--info-slide .pswp__bg {
+        opacity: 0 !important;
+        background-color: transparent !important;
+    }
+
+    .info-fullscreen {
+        z-index: 1061; /* Увеличиваем z-index чтобы был выше фона */
+        background-color: rgba(26, 26, 26, 0.98); /* Делаем фон немного прозрачным */
+    }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="main-title">Digital Art</h1>
+        <div class="title-divider"></div>
+        <p class="subtitle">Осенние истории</p>
+    </header>
+
+    <main>
+        <div class="gallery" id="my-gallery">
+            <div class="loader" id="loader"></div>
+            <div class="loading" id="loading-text">Загрузка галереи...</div>
+            <!-- Изображения и информационный блок будут добавлены через JavaScript -->
+        </div>
+    </main>
+
+    <!-- Контейнер для информационного слайда -->
+    <div class="info-fullscreen" id="info-fullscreen">
+        <h2>Ваш цифровой портрет.. немного о процессе:</h2>
+        <p>Рад творческому сотрудничеству с вами! Я создаю для вас портрет в технике цифровой живописи. Это не фотография, а уникальное арт-произведение, где главная задача — передать настроение и создать гармоничный образ.</p>
+        <p>Что делает ваш портрет особенным: черты лица, свет и фактуры могут быть специально стилизованы для большей художественной выразительности. Именно это придает портрету характер и ценность.Гармония впечатления. Я фокусируюсь на общей целостности и эстетике картины. Иногда для достижения идеального визуального баланса некоторые детали прорабатываются не с фотографической точностью, а как элемент искусства. Благодарю за доверие и понимание! Я делаю всё, чтобы результат вас искренне радовал. С уважением, Александр Корсун
+        </p>
+    </div>
+
+    <footer>
+        <p>© Корсун А.</p>
+        <p>Все права защищены</p>
+    </footer>
+
+    <!-- Подключаем PhotoSwipe -->
+    <script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/umd/photoswipe.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/umd/photoswipe-lightbox.umd.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Показываем индикатор загрузки
+        const loader = document.getElementById('loader');
+        const loadingText = document.getElementById('loading-text');
+        const infoFullscreen = document.getElementById('info-fullscreen');
+        loader.style.display = 'block';
+        
+        // Данные о изображениях из папки images
+        const images = [
+            {
+                src: 'images/образец_№1_мал_ёжик.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №1',
+                description: 'Мальчик с ёжиком и яблоком'
+            },
+            {
+                src: 'images/образец_№2_мальч_грабли_2.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №2',
+                description: 'Маленький хранитель парка'
+            },
+            {
+                src: 'images/образец_№3_мал_грабли.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №3',
+                description: 'Великий труженник и его вознаграждение'
+            },
+            {
+                src: 'images/образец_№4_мальч_парк_ёжик .jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №4',
+                description: 'Колючее счастье'
+            },
+            {
+                src: 'images/образец_№5_дев_парк_белки.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №5',
+                description: 'Осенний жёлудь'
+            },
+            {
+                src: 'images/образец_№6_дев_объятия_собаки.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №6',
+                description: 'Нежность'
+            },
+            {
+                src: 'images/образец_№7_дев_котик.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №7',
+                description: 'Девочка с котёнком в корзине'
+            },
+            {
+                src: 'images/образец_№8_мальч_кепка_берёзы.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №8',
+                description: 'Бабье лето'
+            },
+            {
+                src: 'images/образец_№9_мальч_парк_собака.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №9',
+                description: 'Верные друзья'
+            },
+            {
+                src: 'images/образец_№10_дев_мел.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №10',
+                description: 'Совместное творчество'
+            },
+            {
+                src: 'images/образец_№11_мальч_кораблик.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №11',
+                description: 'Штурман осенней лужи'
+            },
+            {
+                src: 'images/образец_№12_мальч_тыква.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №12',
+                description: 'Маленький садовник и его тыква'
+            },
+            {
+                src: 'images/образец_№13_дев_объятия_акита.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №13',
+                description: 'Счастье Акиты'
+            },
+            {
+                src: 'images/образец_№14_дев_морковка.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №14',
+                description: 'Первый урожай'
+            },
+            {
+                src: 'images/образец_№15_дев_белки2.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №15',
+                description: 'Тайна старого дерева'
+            },
+            {
+                src: 'images/образец_№16_мальч_ушанка.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №16',
+                description: 'Осенний портрет'
+            },
+            {
+                src: 'images/образец_№17_мальч_бежит_хак.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №17',
+                description: 'Земля предков'
+            },
+            {
+                src: 'images/образец_№18_дев_морковка3.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №18',
+                description: 'Тыкву надо?'
+            },
+            {
+                src: 'images/образец_№19_дев_хак_степь.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №19',
+                description: 'Юная хранительница степей'
+            },
+            {
+                src: 'images/образец_№20_дев_ежевика.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №20',
+                description: 'Первый собранный букет для мамы'
+            },
+            {
+                src: 'images/образец_№21_дев_хак_степь2.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №21',
+                description: 'Хранительница традиций'
+            },
+            {
+                src: 'images/образец_№22_дев_швея.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №22',
+                description: 'Маленькая сказочная портниха'
+            },
+            {
+                src: 'images/образец_№23_мал_интерстеллар.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №23',
+                description: 'Космическая одиссея'
+            },
+            {
+                src: 'images/образец_№24_супергерой.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №24',
+                description: 'Супермен навсегда'
+            },
+            {
+                src: 'images/образец_№25_мальч_mad_max.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №25',
+                description: 'Юный штурман Gigahorse'
+            },
+            {
+                src: 'images/образец_№26_мальч_mad_max_мото.jpg',
+                width: 688,
+                height: 1024,
+                title: 'Образец №26',
+                description: 'Маленький воин Пустошей'
+            }
+        ];
+
+        // Создаем элементы галереи после загрузки данных
+        setTimeout(function() {
+            const galleryElement = document.getElementById('my-gallery');
+            loadingText.style.display = 'none';
+            loader.style.display = 'none';
+            
+            // Добавляем изображения в галерею
+            images.forEach((image, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `
+                    <a href="${image.src}" 
+                       data-pswp-width="${image.width}" 
+                       data-pswp-height="${image.height}" 
+                       data-caption="${image.title} - ${image.description}">
+                        <img src="${image.src}" alt="${image.title}" loading="lazy">
+                        <div class="item-caption">
+                            <h3>${image.title}</h3>
+                            <p>${image.description}</p>
+                        </div>
+                    </a>
+                `;
+                
+                galleryElement.appendChild(item);
+            });
+            
+            // Добавляем информационный блок как последний элемент галереи
+            const infoItem = document.createElement('div');
+            infoItem.className = 'gallery-item info-gallery-item';
+            infoItem.setAttribute('data-pswp-width', 1200);
+            infoItem.setAttribute('data-pswp-height', 800);
+            infoItem.setAttribute('data-caption', '');
+            infoItem.innerHTML = `
+                <h3>Info</h3>
+                <p></p>
+            `;
+            
+            galleryElement.appendChild(infoItem);
+
+            // Инициализация PhotoSwipe Lightbox
+            const lightbox = new PhotoSwipeLightbox({
+                gallery: '#my-gallery',
+                children: 'a, .info-gallery-item',
+                pswpModule: PhotoSwipe,
+                showHideAnimationType: 'fade',
+                arrowPrev: true,
+                arrowNext: true,
+                zoom: true,
+                close: true,
+                counter: true,
+                arrowKeys: true,
+                wheelToZoom: true
+            });
+            
+            // Обработка клика на информационный блок
+            lightbox.on('uiRegister', function() {
+                lightbox.pswp.on('change', function() {
+                    // Всегда скрываем информационный блок при смене слайда
+                    infoFullscreen.style.display = 'none';
+                    document.body.classList.remove('pswp--info-slide');
+                    
+                    // Если текущий слайд - информационный блок
+                    if (lightbox.pswp.currSlide && lightbox.pswp.currSlide.data && 
+                        lightbox.pswp.currSlide.data.element.classList.contains('info-gallery-item')) {
+                        
+                        // Показываем информационный блок
+                        infoFullscreen.style.display = 'flex';
+                        document.body.classList.add('pswp--info-slide');
+                    }
+                });
+
+                // Убедимся, что класс удаляется при закрытии галереи
+                lightbox.pswp.on('close', function() {
+                    infoFullscreen.style.display = 'none';
+                    document.body.classList.remove('pswp--info-slide');
+                });
+            });
+
+            lightbox.init();
+            
+            // Запрещаем контекстное меню на всей странице
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+        }, 1000); // Имитация загрузки данных
+    });
+    </script>
+</body>
+</html>
