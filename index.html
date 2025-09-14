@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Art Gallery</title>
     
+    <!-- Мета-теги для соцсетей -->
+    <meta property="og:title" content="Digital Art Gallery - Осенние истории">
+    <meta property="og:description" content="Галерея цифровых портретов в осенней тематике">
+    <meta property="og:image" content="https://korsunfoto.github.io/autumn-2025/images/образец_№1_мал_ёжик.jpg">
+    <meta property="og:url" content="https://korsunfoto.github.io/autumn-2025/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
     <!-- Подключаем шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
@@ -149,7 +157,12 @@
         width: 100%;
     }
 
-    /* Стили для PhotoSwipe - скрываем стрелки на мобильных */
+    /* Стили для PhotoSwipe - скрываем стрелки на всех устройствах */
+    .pswp__button--arrow--left,
+    .pswp__button--arrow--right {
+        display: none !important;
+    }
+
     .pswp__button--download {
         display: none !important;
     }
@@ -239,19 +252,31 @@
 
     .info-fullscreen {
         display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 800px;
+        height: auto;
+        max-height: 80vh;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 40px;
-        text-align: center;
-        background-color: #1a1a1a;
+        text-align: justify;
+        background-color: transparent;
         color: white;
-        z-index: 1060;
+        z-index: 1600;
+        overflow-y: auto;
+        border-radius: 12px;
+    }
+
+    .info-fullscreen-content {
+        max-width: 800px;
+        width: 100%;
+        padding: 30px;
+        background: transparent;
     }
 
     .info-fullscreen h2 {
@@ -261,20 +286,48 @@
         margin-bottom: 1.5rem;
         color: var(--accent-orange);
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        text-align: center;
     }
 
     .info-fullscreen p {
         font-size: 1rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        max-width: 800px;
+        line-height: 1.6;
+        margin-bottom: 1.2rem;
         color: #ffffff;
         opacity: 0.95;
         font-weight: 400;
+        text-align: justify;
+        hyphens: auto;
+    }
+
+    .info-fullscreen p:last-child {
+        margin-bottom: 0;
     }
 
     .pswp--info-slide .info-fullscreen {
         display: flex;
+    }
+
+    /* Исправление для отображения информационного блока */
+    .pswp--info-slide .pswp__container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pswp--info-slide .pswp__item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pswp--info-slide .pswp__img {
+        opacity: 0;
+    }
+
+    .pswp--info-slide .pswp__bg {
+        opacity: 0.98 !important;
+        background-color: #1a1a1a !important;
     }
 
     @media (max-width: 1200px) {
@@ -327,6 +380,10 @@
         
         .info-fullscreen {
             padding: 30px;
+        }
+        
+        .info-fullscreen-content {
+            padding: 20px;
         }
         
         .info-fullscreen h2 {
@@ -388,6 +445,10 @@
             padding: 20px;
         }
         
+        .info-fullscreen-content {
+            padding: 15px;
+        }
+        
         .info-fullscreen h2 {
             font-size: 1.4rem;
             margin-bottom: 1rem;
@@ -395,7 +456,7 @@
         
         .info-fullscreen p {
             font-size: 0.85rem;
-            line-height: 1.3;
+            line-height: 1.4;
         }
     }
 
@@ -443,25 +504,6 @@
     .gallery-item:hover::before {
         opacity: 1;
     }
-
-    /* Скрываем стрелки навигации на мобильных устройствах */
-    @media (max-width: 768px) {
-        .pswp__button--arrow--left,
-        .pswp__button--arrow--right {
-            display: none !important;
-        }
-    }
-
-    /* Исправляем проблему с затемнением информационного блока */
-    .pswp--info-slide .pswp__bg {
-        opacity: 0 !important;
-        background-color: transparent !important;
-    }
-
-    .info-fullscreen {
-        z-index: 1061; /* Увеличиваем z-index чтобы был выше фона */
-        background-color: rgba(26, 26, 26, 0.98); /* Делаем фон немного прозрачным */
-    }
     </style>
 </head>
 <body>
@@ -481,10 +523,12 @@
 
     <!-- Контейнер для информационного слайда -->
     <div class="info-fullscreen" id="info-fullscreen">
-        <h2>Ваш цифровой портрет.. немного о процессе:</h2>
-        <p>Рад творческому сотрудничеству с вами! Я создаю для вас портрет в технике цифровой живописи. Это не фотография, а уникальное арт-произведение, где главная задача — передать настроение и создать гармоничный образ.</p>
-        <p>Что делает ваш портрет особенным: черты лица, свет и фактуры могут быть специально стилизованы для большей художественной выразительности. Именно это придает портрету характер и ценность.Гармония впечатления. Я фокусируюсь на общей целостности и эстетике картины. Иногда для достижения идеального визуального баланса некоторые детали прорабатываются не с фотографической точностью, а как элемент искусства. Благодарю за доверие и понимание! Я делаю всё, чтобы результат вас искренне радовал. С уважением, Александр Корсун
-        </p>
+        <div class="info-fullscreen-content">
+            <h2>Ваш цифровой портрет.. немного о процессе:</h2>
+            <p>Рад творческому сотрудничеству с вами! Я создаю для вас портрет в технике цифровой живописи. Это не фотография, а уникальное арт-произведение, где главная задача — передать настроение и создать гармоничный образ.</p>
+            <p>Что делает ваш портрет особенным: черты лица, свет и фактуры могут быть специально стилизованы для большей художественной выразительности. Именно это придает портрету характер и ценность. Гармония впечатления. Я фокусируюсь на общей целостности и эстетике картины. Иногда для достижения идеального визуального баланса некоторые детали прорабатываются не с фотографической точностью, а как элемент искусства.</p>
+            <p>Благодарю за доверие и понимание! Я делаю всё, чтобы результат вас искренне радовал. С уважением, Александр Корсун</p>
+        </div>
     </div>
 
     <footer>
@@ -584,7 +628,7 @@
                 description: 'Штурман осенней лужи'
             },
             {
-                src: 'images/образец_№12_мальч_тыква.jpg',
+                src: 'images/образец_№12_мальч_ тыква.jpg',
                 width: 688,
                 height: 1024,
                 title: 'Образец №12',
@@ -721,10 +765,10 @@
             infoItem.className = 'gallery-item info-gallery-item';
             infoItem.setAttribute('data-pswp-width', 1200);
             infoItem.setAttribute('data-pswp-height', 800);
-            infoItem.setAttribute('data-caption', '');
+            infoItem.setAttribute('data-caption', 'Информация о процессе создания');
             infoItem.innerHTML = `
                 <h3>Info</h3>
-                <p></p>
+                <p>О процессе создания цифровых портретов</p>
             `;
             
             galleryElement.appendChild(infoItem);
@@ -735,8 +779,8 @@
                 children: 'a, .info-gallery-item',
                 pswpModule: PhotoSwipe,
                 showHideAnimationType: 'fade',
-                arrowPrev: true,
-                arrowNext: true,
+                arrowPrev: false, // Отключаем стрелки
+                arrowNext: false, // Отключаем стрелки
                 zoom: true,
                 close: true,
                 counter: true,
@@ -749,22 +793,24 @@
                 lightbox.pswp.on('change', function() {
                     // Всегда скрываем информационный блок при смене слайда
                     infoFullscreen.style.display = 'none';
-                    document.body.classList.remove('pswp--info-slide');
                     
-                    // Если текущий слайд - информационный блок
-                    if (lightbox.pswp.currSlide && lightbox.pswp.currSlide.data && 
-                        lightbox.pswp.currSlide.data.element.classList.contains('info-gallery-item')) {
-                        
+                    // Получаем общее количество слайдов
+                    const totalSlides = lightbox.pswp.getNumItems();
+                    
+                    // Если текущий слайд - информационный блок (последний слайд)
+                    if (lightbox.pswp.currSlide && lightbox.pswp.currSlide.index === totalSlides - 1) {
                         // Показываем информационный блок
                         infoFullscreen.style.display = 'flex';
-                        document.body.classList.add('pswp--info-slide');
+                        // Перемещаем блок в контейнер PhotoSwipe
+                        lightbox.pswp.currSlide.holderElement.appendChild(infoFullscreen);
                     }
                 });
 
                 // Убедимся, что класс удаляется при закрытии галереи
                 lightbox.pswp.on('close', function() {
                     infoFullscreen.style.display = 'none';
-                    document.body.classList.remove('pswp--info-slide');
+                    // Возвращаем блок обратно в body
+                    document.body.appendChild(infoFullscreen);
                 });
             });
 
