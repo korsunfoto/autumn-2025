@@ -266,11 +266,11 @@
         justify-content: center;
         align-items: center;
         padding: 20px;
-        text-align: justify;
         background-color: var(--dark-bg);
         color: white;
         z-index: 1600;
         overflow-y: auto;
+        /* Убираем pointer-events: none для мобильных устройств */
     }
 
     .info-fullscreen-content {
@@ -337,13 +337,49 @@
         touch-action: pan-y;
     }
 
+    /* Убираем pointer-events: none для информационного блока на мобильных */
     .info-fullscreen {
-        pointer-events: none;
+        pointer-events: auto;
     }
 
     .info-fullscreen-content {
         pointer-events: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    /* Новые стили для улучшения свайпа на информационном слайде */
+    .pswp--info-slide .pswp__scroll-wrap {
+        touch-action: pan-y;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pswp--info-slide .info-fullscreen {
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pswp--info-slide .info-fullscreen-content {
+        touch-action: pan-y;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Зоны для свайпа по бокам информационного слайда */
+    .swipe-area {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 30%;
+        z-index: 10;
+    }
+
+    .swipe-area-left {
+        left: 0;
+    }
+
+    .swipe-area-right {
+        right: 0;
     }
 
     @media (max-width: 1200px) {
@@ -462,22 +498,27 @@
             padding: 10px;
             justify-content: flex-start;
             padding-top: 60px;
+            /* Убираем pointer-events: none для мобильных устройств */
+            pointer-events: auto;
         }
         
         .info-fullscreen-content {
             padding: 15px;
+            pointer-events: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         .info-fullscreen h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
         }
         
         .info-fullscreen p {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            text-align: left;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            text-align: justify;
             text-align-last: left;
+            margin-bottom: 0.8rem;
         }
 
         /* Улучшаем поддержку свайпа на мобильных */
@@ -489,6 +530,25 @@
             max-height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* Для информационного слайда на мобильных - разрешаем свайп */
+        .pswp--info-slide .pswp__item {
+            touch-action: pan-y;
+        }
+        
+        .pswp--info-slide .info-fullscreen {
+            pointer-events: auto; /* Включаем события для контейнера */
+        }
+        
+        .pswp--info-slide .info-fullscreen-content {
+            pointer-events: auto; /* Включаем события для контента */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Увеличиваем зоны для свайпа на мобильных */
+        .swipe-area {
+            width: 40%;
         }
     }
 
@@ -555,6 +615,8 @@
 
     <!-- Контейнер для информационного слайда -->
     <div class="info-fullscreen" id="info-fullscreen">
+        <div class="swipe-area swipe-area-left"></div>
+        <div class="swipe-area swipe-area-right"></div>
         <div class="info-fullscreen-content">
             <h2>Цифровой портрет: искусство, а не фото</h2>
             <p>Ваш портрет создается в технике цифровой живописи. Это уникальное произведение, где мы сознательно стилизуем черты лица и детали для художественной выразительности. Фокус на общей гармонии и настроении может означать отклонение от фотографической точности — это и есть ценность искусства.</p>
@@ -662,7 +724,7 @@
                 description: 'Штурман осенней лужи'
             },
             {
-                src: 'images/образец_№12_мальч_тыква.jpg',
+                src: 'images/образец_№12_мальч_ тыква.jpg',
                 width: 688,
                 height: 1024,
                 title: 'Образец №12',
@@ -840,6 +902,20 @@
                         
                         // Добавляем класс для информационного слайда
                         lightbox.pswp.currSlide.holderElement.classList.add('pswp--info-slide');
+                        
+                        // Добавляем обработчики для зон свайпа
+                        const leftSwipeArea = document.querySelector('.swipe-area-left');
+                        const rightSwipeArea = document.querySelector('.swipe-area-right');
+                        
+                        if (leftSwipeArea && rightSwipeArea) {
+                            leftSwipeArea.addEventListener('click', function() {
+                                lightbox.pswp.prev();
+                            });
+                            
+                            rightSwipeArea.addEventListener('click', function() {
+                                lightbox.pswp.next();
+                            });
+                        }
                     } else {
                         // Убираем класс, если это не информационный слайд
                         if (lightbox.pswp.currSlide && lightbox.pswp.currSlide.holderElement) {
